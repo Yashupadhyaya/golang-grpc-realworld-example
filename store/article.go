@@ -31,6 +31,9 @@ func (s *ArticleStore) GetByID(id uint) (*model.Article, error) {
 func (s *ArticleStore) Create(m *model.Article) error {
 	return s.db.Create(&m).Error
 }
+func Create(m *model.Article) string {
+	return "just for testing"
+}
 
 // Update updates an article
 func (s *ArticleStore) Update(m *model.Article) error {

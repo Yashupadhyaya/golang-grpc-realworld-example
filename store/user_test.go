@@ -16,12 +16,6 @@ type mockUserStore struct {
 	db *gorm.DB
 }
 
-/*
-ROOST_METHOD_HASH=UserStore_Create_9495ddb29d
-ROOST_METHOD_SIG_HASH=UserStore_Create_18451817fe
-
-FUNCTION_DEF=func (s *UserStore) Create(m *model.User) error // Create create a user
-*/
 func TestUserStoreCreate(t *testing.T) {
 
 	t.Run("Database function successfully creates user", func(t *testing.T) {
@@ -85,20 +79,6 @@ func TestUserStoreCreate(t *testing.T) {
 	})
 }
 
-func (s *mockUserStore) Create(m *model.User) error {
-
-	if s.db.Error != nil {
-		return errors.New("db error")
-	}
-	return nil
-}
-
-/*
-ROOST_METHOD_HASH=UserStore_GetByEmail_fda09af5c4
-ROOST_METHOD_SIG_HASH=UserStore_GetByEmail_9e84f3286b
-
-FUNCTION_DEF=func (s *UserStore) GetByEmail(email string) (*model.User, error) // GetByEmail finds a user from email
-*/
 func TestUserStoreGetByEmail(t *testing.T) {
 
 	testCases := []struct {
@@ -183,12 +163,6 @@ func TestUserStoreGetByEmail(t *testing.T) {
 	}
 }
 
-/*
-ROOST_METHOD_HASH=UserStore_GetByUsername_622b1b9e41
-ROOST_METHOD_SIG_HASH=UserStore_GetByUsername_992f00baec
-
-FUNCTION_DEF=func (s *UserStore) GetByUsername(username string) (*model.User, error) // GetByUsername finds a user from username
-*/
 func TestUserStoreGetByUsername(t *testing.T) {
 	type args struct {
 		username string
@@ -277,4 +251,12 @@ func TestUserStoreGetByUsername(t *testing.T) {
 			}
 		})
 	}
+}
+
+func (s *mockUserStore) Create(m *model.User) error {
+
+	if s.db.Error != nil {
+		return errors.New("db error")
+	}
+	return nil
 }

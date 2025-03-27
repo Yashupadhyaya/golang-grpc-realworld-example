@@ -1,34 +1,28 @@
+// ********RoostGPT********
+/*
+
+roost_feedback [3/27/2025, 2:36:24 PM]:Use these import statements:\r\n```\r\nimport (\r\n\terrors errors\r\n\truntime/debug\r\n\ttesting testing\r\n\r\n\tsqlmock github.com/DATA-DOG/go-sqlmock\r\n\tgorm github.com/jinzhu/gorm\r\n\tmodel github.com/raahii/golang-grpc-realworld-example/model\r\n\trequire github.com/stretchr/testify/require\r\n)\r\n```\r\n\r\n\r\nThe testing table in the TestUserStoreCreate function must be this:\r\n```\r\ntt := []struct {\r\n\t\tname     string\r\n\t\tuser     *model.User\r\n\t\tmock     func() (sqlmock.Sqlmock, error)\r\n\t\twantErr  bool\r\n\t\texpected *model.User\r\n\t}{\r\n\r\n\t\t{\r\n\t\t\tname: Scenario 1: Normal operation - Create a valid User,\r\n\t\t\tuser: &model.User{\r\n\t\t\t\tUsername: Alice,\r\n\t\t\t},\r\n\t\t\tmock: func() (sqlmock.Sqlmock, error) {\r\n\t\t\t\t_, mock, err := sqlmock.New()\r\n\t\t\t\tif err != nil {\r\n\t\t\t\t\treturn nil, err\r\n\t\t\t\t}\r\n\t\t\t\tmock.ExpectBegin()\r\n\t\t\t\tmock.ExpectExec(INSERT INTO `users` (.+) VALUES (.+)).\r\n\t\t\t\t\tWithArgs(Any, AnyWhere, Any)\r\n\t\t\t\tmock.ExpectCommit()\r\n\t\t\t\treturn mock, err\r\n\t\t\t},\r\n\t\t\twantErr:  false,\r\n\t\t\texpected: nil,\r\n\t\t},\r\n\t}\r\n```\r\n\r\nVERY IMPORTANT NOTE: DO NOT make any other change in the entire test code!!!
+*/
+
+// ********RoostGPT********
+
 package store
 
 import (
-	fmt "fmt"
-	net "net"
-	os "os"
-	testing "testing"
-	gosqlmock "github.com/DATA-DOG/go-sqlmock"
+	"errors"
+	"runtime/debug"
+	"testing"
+
+	sqlmock "github.com/DATA-DOG/go-sqlmock"
 	gorm "github.com/jinzhu/gorm"
 	model "github.com/raahii/golang-grpc-realworld-example/model"
-	require "github.com/stretchr/testify/require"
-	errors "errors"
+	"github.com/stretchr/testify/require"
 )
-
-
-
-
 
 type mockDB struct {
 	Create func(user *model.User) error
 }
 
-
-/*
-ROOST_METHOD_HASH=UserStore_Create_9495ddb29d
-ROOST_METHOD_SIG_HASH=UserStore_Create_18451817fe
-
-FUNCTION_DEF=func (s *UserStore) Create(m *model.User) error // Create create a user
-
-
-*/
 func TestUserStoreCreate(t *testing.T) {
 	tt := []struct {
 		name     string
@@ -37,7 +31,6 @@ func TestUserStoreCreate(t *testing.T) {
 		wantErr  bool
 		expected *model.User
 	}{
-
 		{
 			name: "Scenario 1: Normal operation - Create a valid User",
 			user: &model.User{
@@ -49,7 +42,7 @@ func TestUserStoreCreate(t *testing.T) {
 					return nil, err
 				}
 				mock.ExpectBegin()
-				mock.ExpectExec("INSERT INTO `users` (.+) VALUES (.+)").
+				mock.ExpectExec("INSERT INTO \"users\" (.+) VALUES (.+)").
 					WithArgs(Any, AnyWhere, Any)
 				mock.ExpectCommit()
 				return mock, err
@@ -88,15 +81,6 @@ func (mdb *mockDB) Create(user *model.User) error {
 	return mdb.Create(user)
 }
 
-
-/*
-ROOST_METHOD_HASH=UserStore_GetByEmail_fda09af5c4
-ROOST_METHOD_SIG_HASH=UserStore_GetByEmail_9e84f3286b
-
-FUNCTION_DEF=func (s *UserStore) GetByEmail(email string) (*model.User, error) // GetByEmail finds a user from email
-
-
-*/
 func TestUserStoreGetByEmail(t *testing.T) {
 	testCases := []struct {
 		name          string
@@ -154,15 +138,6 @@ func TestUserStoreGetByEmail(t *testing.T) {
 	}
 }
 
-
-/*
-ROOST_METHOD_HASH=UserStore_GetByUsername_622b1b9e41
-ROOST_METHOD_SIG_HASH=UserStore_GetByUsername_992f00baec
-
-FUNCTION_DEF=func (s *UserStore) GetByUsername(username string) (*model.User, error) // GetByUsername finds a user from username
-
-
-*/
 func TestUserStoreGetByUsername(t *testing.T) {
 	scenarios := []struct {
 		desc     string
@@ -176,7 +151,7 @@ func TestUserStoreGetByUsername(t *testing.T) {
 			mock: func(mock sqlmock.Sqlmock) {
 				rows := sqlmock.NewRows([]string{"username"}).
 					AddRow("testUser")
-				mock.ExpectQuery("^SELECT (.+) FROM `users` WHERE (username = (.+))$").WillReturnRows(rows)
+				mock.ExpectQuery("^SELECT (.+) FROM \"users\" WHERE (username = (.+))$").WillReturnRows(rows)
 			},
 			wantErr: false,
 		},
@@ -184,7 +159,7 @@ func TestUserStoreGetByUsername(t *testing.T) {
 			desc:     "User retrieval with non-existing username",
 			username: "nonExistentUser",
 			mock: func(mock sqlmock.Sqlmock) {
-				mock.ExpectQuery("^SELECT (.+) FROM `users` WHERE (username = (.+))$").WillReturnError(gorm.ErrRecordNotFound)
+				mock.ExpectQuery("^SELECT (.+) FROM \"users\" WHERE (username = (.+))$").WillReturnError(gorm.ErrRecordNotFound)
 			},
 			wantErr: true,
 		},
@@ -192,7 +167,7 @@ func TestUserStoreGetByUsername(t *testing.T) {
 			desc:     "User retrieval with empty username",
 			username: "",
 			mock: func(mock sqlmock.Sqlmock) {
-				mock.ExpectQuery("^SELECT (.+) FROM `users` WHERE (username = (.+))$").WillReturnError(gorm.ErrRecordNotFound)
+				mock.ExpectQuery("^SELECT (.+) FROM \"users\" WHERE (username = (.+))$").WillReturnError(gorm.ErrRecordNotFound)
 			},
 			wantErr: true,
 		},
@@ -234,4 +209,3 @@ func TestUserStoreGetByUsername(t *testing.T) {
 		})
 	}
 }
-

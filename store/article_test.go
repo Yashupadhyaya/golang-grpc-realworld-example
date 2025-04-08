@@ -1,11 +1,11 @@
 package store
 
 import (
-	"testing"
+	testing "testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/jinzhu/gorm"
-	"github.com/raahii/golang-grpc-realworld-example/model"
+	gorm "github.com/jinzhu/gorm"
+	model "github.com/raahii/golang-grpc-realworld-example/model"
 )
 
 var cases = []struct {
@@ -34,12 +34,6 @@ type mockArticleStore struct {
 	db *gorm.DB
 }
 
-/*
-ROOST_METHOD_HASH=ArticleStore_DeleteFavorite_29c18a04a8
-ROOST_METHOD_SIG_HASH=ArticleStore_DeleteFavorite_53deb5e792
-
-FUNCTION_DEF=func (s *ArticleStore) DeleteFavorite(a *model.Article, u *model.User) error // DeleteFavorite unfavorite an article
-*/
 func TestArticleStoreDeleteFavorite(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {

@@ -52,6 +52,8 @@ Execution:
 Validation:
     The assertion validates that the function is capable of handling null inputs in a controlled manner, preventing potential runtime errors or crashes. This is essential for the stability and reliability of the application.
 ```
+
+roost_feedback [27/05/2025, 2:47:21 PM]:Add some test comments
 */
 
 // ********RoostGPT********
@@ -59,48 +61,69 @@ Validation:
 package store
 
 import (
-	"fmt"
 	"testing"
 
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
 	"github.com/raahii/golang-grpc-realworld-example/model"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestArticleStoreCreate(t *testing.T) {
-
+	type args struct {
+		article model.Article
+	}
 	testCases := []struct {
 		testName    string
-		article     model.Article
-		mockError   error
+		args        args
+		prepForMock func(mock sqlmock.Sqlmock)
 		expectError bool
 	}{
 		{
 			testName: "Successful creation of an article",
-			article: model.Article{
-				Title:       "Test Title",
-				Description: "Test Description",
-				Body:        "Test Body",
+			args: args{
+				article: model.Article{
+					Title:       "Test Title",
+					Description: "Test Description",
+					Body:        "Test Body",
+				},
 			},
-			mockError:   nil,
+			prepForMock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+				mock.ExpectExec("^INSERT INTO \"articles\".*").WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectCommit()
+			},
 			expectError: false,
 		},
 		{
 			testName: "Failed creation of an article due to database error",
-			article: model.Article{
-				Title:       "Test Title",
-				Description: "Test Description",
-				Body:        "Test Body",
+			args: args{
+				article: model.Article{
+					Title:       "Test Title",
+					Description: "Test Description",
+					Body:        "Test Body",
+				},
 			},
-			mockError:   fmt.Errorf("database error"),
+			prepForMock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+				mock.ExpectExec("^INSERT INTO \"articles\".*").WillReturnError(errors.New("Mock error"))
+				mock.ExpectRollback()
+			},
 			expectError: true,
 		},
 		{
 			testName: "Attempt to create an article with invalid data",
-			article: model.Article{
-				Title: "",
+			args: args{
+				article: model.Article{
+					Title: "",
+				},
 			},
-			mockError:   nil,
+			prepForMock: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+				mock.ExpectExec("^INSERT INTO \"articles\".*").WillReturnError(errors.New("Mock error: Invalid data"))
+				mock.ExpectRollback()
+			},
 			expectError: true,
 		},
 	}
@@ -110,36 +133,27 @@ func TestArticleStoreCreate(t *testing.T) {
 
 			defer func() {
 				if r := recover(); r != nil {
-					t.Logf("Panic encountered so failing test. %v", r)
-					t.Fail()
+					assert.Fail(t, "Panic encountered", "%v", r)
 				}
 			}()
 
 			dbMock, mock, _ := sqlmock.New()
+			defer dbMock.Close()
+
 			gdb, _ := gorm.Open("postgres", dbMock)
-			mock.ExpectBegin()
-			mock.ExpectQuery("^INSERT INTO \"articles\"*").
-				WillReturnError(tc.mockError)
-			mock.ExpectCommit()
+
+			tc.prepForMock(mock)
 
 			store := &ArticleStore{
 				db: gdb,
 			}
 
-			err := store.Create(&tc.article)
+			err := store.Create(&tc.args.article)
 
 			if tc.expectError {
-				if err == nil {
-					t.Errorf("Expected error, got nil")
-				} else {
-					t.Logf("Expected error occurred: %v", err)
-				}
+				assert.Error(t, err)
 			} else {
-				if err != nil {
-					t.Errorf("Unexpected error occurred: %v", err)
-				} else {
-					t.Logf("No error occurred as expected")
-				}
+				assert.NoError(t, err)
 			}
 		})
 	}

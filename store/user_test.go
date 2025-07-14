@@ -1,20 +1,19 @@
 package store
 
 import (
-	"errors"
-	"runtime/debug"
-	"strings"
-	"testing"
-	"time"
-
-	"database/sql"
-	"reflect"
+	sql "database/sql"
+	errors "errors"
+	reflect "reflect"
+	debug "runtime/debug"
+	strings "strings"
+	testing "testing"
+	time "time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/jinzhu/gorm"
+	gorm "github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/raahii/golang-grpc-realworld-example/model"
-	"github.com/stretchr/testify/assert"
+	model "github.com/raahii/golang-grpc-realworld-example/model"
+	assert "github.com/stretchr/testify/assert"
 )
 
 type testCase struct {
@@ -25,12 +24,6 @@ type testCase struct {
 	mockBehavior  func()
 }
 
-/*
-ROOST_METHOD_HASH=UserStore_GetByEmail_fda09af5c4
-ROOST_METHOD_SIG_HASH=UserStore_GetByEmail_9e84f3286b
-
-FUNCTION_DEF=func (s *UserStore) GetByEmail(email string) (*model.User, error) // GetByEmail finds a user from email
-*/
 func TestUserStoreGetByEmail(t *testing.T) {
 
 	db, mock, err := sqlmock.New()
@@ -189,12 +182,6 @@ func TestUserStoreGetByEmail(t *testing.T) {
 	}
 }
 
-/*
-ROOST_METHOD_HASH=UserStore_GetByUsername_622b1b9e41
-ROOST_METHOD_SIG_HASH=UserStore_GetByUsername_992f00baec
-
-FUNCTION_DEF=func (s *UserStore) GetByUsername(username string) (*model.User, error) // GetByUsername finds a user from username
-*/
 func TestUserStoreGetByUsername(t *testing.T) {
 
 	db, mock, err := sqlmock.New()

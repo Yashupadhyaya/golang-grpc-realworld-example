@@ -12,12 +12,6 @@ type MockUserStore struct {
 	mock.Mock
 }
 
-/*
-ROOST_METHOD_HASH=Handler_CreateArticle_e5cc3b252e
-ROOST_METHOD_SIG_HASH=Handler_CreateArticle_ce1c125740
-
-FUNCTION_DEF=func (h *Handler) CreateArticle(ctx context.Context, req *pb.CreateAritcleRequest) (*pb.ArticleResponse, error)
-*/
 func (m *MockArticleStore) Create(a *model.Article) error {
 	args := m.Called(a)
 	return args.Error(0)

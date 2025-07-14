@@ -1,3 +1,12 @@
+
+// ********RoostGPT********
+/*
+
+roost_feedback [14/07/2025, 8:24:32 AM]:-\sAdd\smore\scomments\sto\sthe\stest
+*/
+
+// ********RoostGPT********
+
 package store
 
 import (
@@ -13,9 +22,9 @@ import (
 )
 
 type Comment struct {
-	ID        uint   `gorm:"primaryKey"`
-	ArticleID uint   `gorm:"not null"`
-	Body      string `gorm:"type:text;not null"`
+	ID        uint   "gorm:"primaryKey""
+	ArticleID uint   "gorm:"not null""
+	Body      string "gorm:"type:text;not null""
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -56,7 +65,7 @@ func TestArticleStoreCreateComment(t *testing.T) {
 			},
 			mock: func() {
 				mock.ExpectBegin()
-				mock.ExpectExec("INSERT INTO `comments` .*").WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectExec("INSERT INTO "comments" .*").WillReturnResult(sqlmock.NewResult(1, 1))
 				mock.ExpectCommit()
 			},
 			wantErr: false,
@@ -69,7 +78,7 @@ func TestArticleStoreCreateComment(t *testing.T) {
 			},
 			mock: func() {
 				mock.ExpectBegin()
-				mock.ExpectExec("INSERT INTO `comments` .*").WillReturnError(errors.New("validation failed"))
+				mock.ExpectExec("INSERT INTO "comments" .*").WillReturnError(errors.New("validation failed"))
 				mock.ExpectRollback()
 			},
 			wantErr: true,
@@ -82,7 +91,7 @@ func TestArticleStoreCreateComment(t *testing.T) {
 			},
 			mock: func() {
 				mock.ExpectBegin()
-				mock.ExpectExec("INSERT INTO `comments` .*").WillReturnError(errors.New("database error"))
+				mock.ExpectExec("INSERT INTO "comments" .*").WillReturnError(errors.New("database error"))
 				mock.ExpectRollback()
 			},
 			wantErr: true,
@@ -95,7 +104,7 @@ func TestArticleStoreCreateComment(t *testing.T) {
 			},
 			mock: func() {
 				mock.ExpectBegin()
-				mock.ExpectExec("INSERT INTO `comments` .*").WillReturnError(errors.New("duplicate entry"))
+				mock.ExpectExec("INSERT INTO "comments" .*").WillReturnError(errors.New("duplicate entry"))
 				mock.ExpectRollback()
 			},
 			wantErr: true,
@@ -105,7 +114,7 @@ func TestArticleStoreCreateComment(t *testing.T) {
 			comment: &model.Comment{},
 			mock: func() {
 				mock.ExpectBegin()
-				mock.ExpectExec("INSERT INTO `comments` .*").WillReturnError(errors.New("validation failed"))
+				mock.ExpectExec("INSERT INTO "comments" .*").WillReturnError(errors.New("validation failed"))
 				mock.ExpectRollback()
 			},
 			wantErr: true,
@@ -118,7 +127,7 @@ func TestArticleStoreCreateComment(t *testing.T) {
 			},
 			mock: func() {
 				mock.ExpectBegin()
-				mock.ExpectExec("INSERT INTO `comments` .*").WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectExec("INSERT INTO "comments" .*").WillReturnResult(sqlmock.NewResult(1, 1))
 				mock.ExpectCommit()
 			},
 			wantErr: false,
@@ -131,7 +140,7 @@ func TestArticleStoreCreateComment(t *testing.T) {
 			},
 			mock: func() {
 				mock.ExpectBegin()
-				mock.ExpectExec("INSERT INTO `comments` .*").WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectExec("INSERT INTO "comments" .*").WillReturnResult(sqlmock.NewResult(1, 1))
 				mock.ExpectCommit()
 			},
 			wantErr: false,
@@ -144,7 +153,7 @@ func TestArticleStoreCreateComment(t *testing.T) {
 			},
 			mock: func() {
 				mock.ExpectBegin()
-				mock.ExpectExec("INSERT INTO `comments` .*").WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectExec("INSERT INTO "comments" .*").WillReturnResult(sqlmock.NewResult(1, 1))
 				mock.ExpectCommit()
 			},
 			wantErr: false,
@@ -190,7 +199,7 @@ func TestArticleStoreCreateComment(t *testing.T) {
 			}
 			go func() {
 				mock.ExpectBegin()
-				mock.ExpectExec("INSERT INTO `comments` .*").WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectExec("INSERT INTO "comments" .*").WillReturnResult(sqlmock.NewResult(1, 1))
 				mock.ExpectCommit()
 				err := articleStore.CreateComment(comment)
 				errorsChan <- err
@@ -224,7 +233,7 @@ func TestArticleStoreCreateComment(t *testing.T) {
 				Body:      fmt.Sprintf("This is comment %d", i+1),
 			}
 			mock.ExpectBegin()
-			mock.ExpectExec("INSERT INTO `comments` .*").WillReturnResult(sqlmock.NewResult(1, 1))
+			mock.ExpectExec("INSERT INTO "comments" .*").WillReturnResult(sqlmock.NewResult(1, 1))
 			mock.ExpectCommit()
 			err := articleStore.CreateComment(comment)
 			if err != nil {

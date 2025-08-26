@@ -7,14 +7,7 @@ import (
 	time "time"
 )
 
-/*
-ROOST_METHOD_HASH=GenerateTokenWithTime_aa6cebe464
-ROOST_METHOD_SIG_HASH=GenerateTokenWithTime_96ec3b7507
-
-FUNCTION_DEF=func GenerateTokenWithTime(id uint, t time.Time) (string, error) // GenerateTokenWithTime generates a new token with expired date computed withspecified time
-*/
 func TestGenerateTokenWithTime(t *testing.T) {
-
 	tests := []struct {
 		name      string
 		userID    uint
@@ -65,6 +58,24 @@ func TestGenerateTokenWithTime(t *testing.T) {
 			expectErr: false,
 			expected: func(token string, err error) bool {
 				return err == nil && len(token) > 0
+			},
+		},
+		{
+			name:      "Negative Scenario: Past Date",
+			userID:    123,
+			timeInput: time.Date(2010, 1, 1, 9, 0, 0, 0, time.UTC),
+			expectErr: true,
+			expected: func(token string, err error) bool {
+				return err != nil || len(token) == 0
+			},
+		},
+		{
+			name:      "Negative Scenario: ID Overflow",
+			userID:    uint(0xFFFFFFFFFFFFFFFF),
+			timeInput: time.Now(),
+			expectErr: true,
+			expected: func(token string, err error) bool {
+				return err != nil || len(token) == 0
 			},
 		},
 	}

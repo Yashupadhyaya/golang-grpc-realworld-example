@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/raahii/golang-grpc-realworld-example/auth/auth.go (22.2%)</option>
+				<option value="file0">github.com/raahii/golang-grpc-realworld-example/auth/auth.go (0.0%)</option>
 				
 				<option value="file1">github.com/raahii/golang-grpc-realworld-example/db/db.go (0.0%)</option>
 				
@@ -135,12 +135,12 @@ func GenerateToken(id uint) (string, error) <span class="cov0" title="0">{
 }</span>
 
 // GenerateTokenWithTime generates a new token with expired date computed withspecified time
-func GenerateTokenWithTime(id uint, t time.Time) (string, error) <span class="cov8" title="1">{
+func GenerateTokenWithTime(id uint, t time.Time) (string, error) <span class="cov0" title="0">{
         // for test
         return generateToken(id, t)
 }</span>
 
-func generateToken(id uint, now time.Time) (string, error) <span class="cov8" title="1">{
+func generateToken(id uint, now time.Time) (string, error) <span class="cov0" title="0">{
         claims := &amp;claims{
                 id,
                 jwt.StandardClaims{
@@ -154,7 +154,7 @@ func generateToken(id uint, now time.Time) (string, error) <span class="cov8" ti
                 return "", err
         }</span>
 
-        <span class="cov8" title="1">return t, nil</span>
+        <span class="cov0" title="0">return t, nil</span>
 }
 
 // GetUserID gets user id string from request context
